@@ -1,0 +1,18 @@
+# Package Imports
+from gmdkit.serialization.type_cast import to_string
+from gmdkit.models.prop.list import IntList
+
+
+LIST_DECODERS = {{
+{list_decoders}
+}}
+
+
+LIST_ENCODERS = {{
+{list_encoders}
+}}
+
+
+LIST_TYPES = {{
+{list_types}
+}}
