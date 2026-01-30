@@ -14,7 +14,6 @@ from gmdkit.serialization.functions import (
     dict_wrapper, array_wrapper
 )
 
-Decoder = Callable[[int|str, Any], tuple[str, Any]]
 DecoderWithKwargs = Callable[..., tuple[str, Any]]
 DictDecoder = Callable[[int|str, Any], tuple[Any, Any]]
 
@@ -93,10 +92,6 @@ class PlistDecoderMixin:
     
     def update(self, **kwargs):
         self.to_file(path=self.path, **kwargs)
-    
-    
-    def reload(self, **kwargs):
-        self.from_file(path=self.path, **kwargs)
     
     
     @classmethod
@@ -373,55 +368,6 @@ class ArrayDecoderMixin:
         encoder = encoder or self.ENCODER or str
 
         return separator.join([encoder(x) for x in self])
-
-
-class TypedDictMixin:
-    
-    KEY_TYPES: dict[str, Any] | None = None
-    
-    def coerce(self, key, value):
-        key_type = self.KEY_TYPES.get(key)
-        
-        if callable(key_type):
-            value = key_type(value)
-        
-        self[key] = value
-
-
-
-class DictDefaultMixin:
-    
-    KEY_DEFAULTS: dict[str, Any] | None = None
-    
-    def get_keydef(self, key:int|str):
-        if not self.KEY_DEFAULTS: return 
-        return self.KEY_DEFAULTS.get(key, None)
-    
-    def auto_keydef(self, *args):
-        for k in args:
-            if k not in self and (v:=self.get_keydef(k)) is not None:
-                self[k] = v
-    
-    def reset_keydef(self, *args):
-        for k in args:
-            if (v:=self.get_keydef(k)) is not None:
-                self[k] = v
-                
-    def to_string(self, skip_default:bool=False, condition:Callable|None=None,**kwargs):
-        
-        get_default = self.KEY_DEFAULTS and (skip_default or options.discard_default.get())
-        use_condition = callable(condition)
-        
-        if get_default and use_condition:
-            func = lambda k,v: condition(k,v) and v != self.get_keydef(k)
-        elif get_default:
-            func = lambda k,v: v != self.get_keydef(k)
-        elif use_condition:
-            func = condition
-        else:
-            func = None
-        
-        return super().to_string(condition=func)
 
 
 class DelimiterMixin:
