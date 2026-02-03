@@ -36,6 +36,9 @@ class ListClass(list):
     def __repr__(self):
         return f"{self.__class__.__name__}({super().__repr__()})"
         
+    
+    def append(self, object: Any, /) -> None:
+        super().append(object)
         
     def copy(self) -> Self:
         return self.__class__(self)
