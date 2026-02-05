@@ -6,13 +6,129 @@ TEMPLATE_PATH = "scripts/build_scripts/templates/casting_obj_props.txt"
 FILEPATH = "src/gmdkit/casting/object_props.py"
 FOLDERPATH = "src/gmdkit/mappings/obj_prop/"
 
+
+def match_enum(enum_format):
+    match enum_format:
+        
+        case 'old color':
+            return 'enums.OldColor'
+        
+        case 'easing':
+            return 'enums.Easing'
+        
+        case 'pulse target':
+            return 'enums.PulseTarget'
+        
+        case 'touch mode':
+            return 'enums.TouchMode'
+        
+        case 'instant count mode':
+            return 'enums.InstantCountMode'
+        
+        case 'pickup mode':
+            return 'enums.PickupMode'
+        
+        case 'select axis':
+            return 'enums.SelectAxis'
+        
+        case 'option':
+            return 'enums.Option'
+        
+        case 'camera edge':
+            return 'enums.CameraEdge'
+        
+        case 'arrow direction':
+            return 'enums.ArrowDir'
+        
+        case 'gradient blending':
+            return 'enums.GradientBlending'
+        
+        case 'gradient layer':
+            return 'enums.GradientLayer'
+        
+        case 'select player':
+            return 'enums.SelectPlayer'
+        
+        case 'enter mode':
+            return 'enums.EnterMode'
+        
+        case 'gravity mode':
+            return 'enums.GravityMode'
+        
+        case 'adv follow mode':
+            return 'enums.AdvFollowMode'
+        
+        case 'keyframe ref mode':
+            return 'enums.KeyframeRefMode'
+        
+        case 'ui x ref':
+            return 'enums.UIRefX'
+        
+        case 'ui y ref':
+            return 'enums.UIRefY'
+        
+        case 'label special id':
+            return 'enums.ItemLabelSpecialID'
+        
+        case 'label alignment':
+            return 'enums.ItemLabelAlignment'
+        
+        case 'sequence mode':
+            return 'enums.SequenceMode'
+        
+        case 'volume direction':
+            return 'enums.VolumeDirection'
+        
+        case 'item type':
+            return 'enums.ItemType'
+        
+        case 'item operation':
+            return 'enums.ItemOperation'
+        
+        case 'item round op':
+            return 'enums.ItemRoundOp'
+        
+        case 'single color mode':
+            return 'enums.SingleColorMode'
+        
+        case 'speed':
+            return 'enums.Speed'
+        
+        case 'reverb preset':
+            return 'enums.ReverbPreset'
+        
+        case 'keyframe spin':
+            return 'enums.KeyframeSpin'
+        
+        case 'effect special id':
+            return 'enums.EffectSpecialCenter'
+        
+        case 'adv follow init':
+            return 'enums.AdvFollowInit'
+        
+        case 'item sign op':
+            return 'enums.ItemSignOp'
+        
+        case 'stop mode':
+            return 'enums.StopMode'
+        
+        case 'gamemode':
+            return 'enums.Gamemode'
+        
+        case _:
+            return
+    
 # Map CSV types to library types
 def get_obj_types(gd_type, gd_format, key):
     
     match gd_type:
         
         case 'int' | 'integer' | 'number':
-            return 'int'
+                
+            if (enum:=match_enum(gd_format)):
+                return enum
+            else:
+                return 'int'
         
         case 'bool':
             return 'bool'
@@ -30,8 +146,11 @@ def get_obj_types(gd_type, gd_format, key):
                 case 'particle':
                     return 'Particle'
                 
-                case 'groups' | 'parent_groups' | 'events':
+                case 'groups' | 'parent_groups':
                     return 'IDList'
+                
+                case  'events':
+                    return "EventList"
                 
                 case  'weights' | 'sequence' | 'group weights' | 'group counts':
                     return 'IntPairList'
@@ -58,7 +177,10 @@ def decode_obj_props(gd_type, gd_format, key):
     match gd_type:
         
         case 'int' | 'integer' | 'number':
-            return 'int'
+            if (enum:=match_enum(gd_format)):
+                return enum+'.from_string'
+            else:
+                return 'int'
         
         case 'bool':
             return 'to_bool'
@@ -79,8 +201,11 @@ def decode_obj_props(gd_type, gd_format, key):
                 case 'particle':
                     return 'Particle.from_string'
                 
-                case 'groups' | 'parent_groups' | 'events':
+                case 'groups' | 'parent_groups':
                     return 'IDList.from_string'
+                
+                case  'events':
+                    return "EventList"
                 
                 case  'weights' | 'sequence' | 'group weights' | 'group counts':
                     return 'IntPairList.from_string'
@@ -182,7 +307,6 @@ def main():
                       for _, row in prop_class.iterrows() if str(row[column]) not in ("nan","None")]
             
             values.sort(key=lambda x: sort_number(x[0]))
-            print(values)
             return "\n".join([f"    {repr(x[0])}: {x[1]}," for x in values])
          
         prop_decoders = gen_dict("decode")

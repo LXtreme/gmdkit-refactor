@@ -53,18 +53,13 @@ class Easing(EnumClass):
     BACK_IN = 17
     BACK_OUT = 18
     
-     
-class ColorPlayer(EnumClass):
-    NONE = 0
-    PLAYER_1 = 1
-    PLAYER_2 = 2
-
 
 class ItemLabelAlignment(EnumClass):
     CENTER = 0
     LEFT = 1
     RIGHT = 2
-    
+
+
 class ItemLabelSpecialID(EnumClass):
     MAINTIME = -1
     POINTS = -2
@@ -119,7 +114,7 @@ class VolumeDirection(EnumClass):
     DOWN = 5
     UP = 6
     
-class ReverbPresets(EnumClass):
+class ReverbPreset(EnumClass):
     GENERIC = 0
     PADDED_CELL = 1
     ROOM = 2
@@ -162,7 +157,7 @@ class Option(EnumClass):
     IGNORE = 0
     ENABLE = 1
 
-class KeyframeSpinDir(EnumClass):
+class KeyframeSpin(EnumClass):
     NONE = 0
     CW = 1
     CCW = 2
@@ -244,7 +239,7 @@ class EffectSpecialCenter(EnumClass):
     CR = -10
     TR = -11
     
-class Edge(EnumClass):
+class CameraEdge(EnumClass):
     NONE = 0
     LEFT = 1
     RIGHT = 2
@@ -437,3 +432,91 @@ class LevelLength(EnumClass):
     LONG = 3
     XL = 4
     PLAT = 5
+    
+class OfficialSongs(EnumClass):
+    STAY_INSIDE_ME = -1
+    STEREO_MADNESS = 0
+    BACK_ON_TRACK = 1
+    POLARGEIST = 2
+    DRY_OUT = 3
+    BASE_AFTER_BASE = 4
+    CANT_LET_GO = 5
+    JUMPER = 6
+    TIME_MACHINE = 7
+    CYCLES = 8
+    XSTEP = 9
+    CLUTTERFUNK = 10
+    THEORY_OF_EVERYTHING = 11
+    ELECTROMAN_ADVENTURES = 12
+    CLUBSTEP = 13
+    ELECTRODYNAMIX = 14
+    HEXAGON_FORCE = 15
+    BLAST_PROCESSING = 16
+    THEORY_OF_EVERYTHING_2 = 17
+    GEOMETRICAL_DOMINATOR = 18
+    DEADLOCKED = 19
+    FINGERDASH = 20
+    DASH = 21
+    EXPLORERS = 22
+    THE_SEVEN_SEAS = 23
+    VIKING_ARENA = 24
+    AIRBORNE_ROBOTS = 25
+    SECRET = 26
+    PAYLOAD = 27
+    BEAST_MODE = 28
+    MACHINA = 29
+    YEARS = 30
+    FRONTLINES = 31
+    SPACE_PIRATES = 32
+    STRIKER = 33
+    EMBERS = 34
+    ROUND_1 = 35
+    MONSTER_DANCE_OFF = 36
+    PRESS_START = 37
+    NOCK_EM = 38
+    POWER_TRIP = 39
+    
+    
+class EpicRating(EnumClass):
+    NONE = 0
+    EPIC = 1
+    LEGENDARY = 2
+    MYTHIC = 3
+
+class FeatureRating(EnumClass):
+    UNRATED = 0
+    RATED = 1
+    FEATURED = 2
+    EPIC = 3
+    LEGENDARY = 4
+    MYTHIC = 5
+    
+class DemonRating(EnumClass):
+    HARD = 0
+    EASY = 3
+    MEDIUM = 4
+    INSANE = 5
+    EXTREME = 6
+    
+class LevelType(EnumClass):
+    OFFICIAL = 1
+    LOCAL = 2
+    SAVED = 3
+    ONLINE = 4
+    
+class ListType(EnumClass):
+    LOCAL = 2
+
+class TimelyType(EnumClass):
+    NONE = 0
+    DAILY = 1
+    WEEKLY = 2
+    EVENT = 3
+
+class LevelRating(EnumClass):
+    NONE = 0
+    EASY = 10
+    NORMAL = 20
+    HARD = 30
+    HARDER = 40
+    INSANE = 50

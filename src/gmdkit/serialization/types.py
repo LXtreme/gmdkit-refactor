@@ -228,7 +228,6 @@ class ListClass(list):
         -------
         set
             A set containing the unique collected values.
-
         """
         if not functions:
             return set()
@@ -264,7 +263,6 @@ class ListClass(list):
         -------
         set
             A set containing the shared collected values.
-
         """
         if not functions or not self:
             return set()
@@ -292,8 +290,7 @@ class DictClass(dict):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        
+           
     @classmethod
     def fromkeys(cls, iterable, value: Any = None):
         return cls(dict.fromkeys(iterable, value))
@@ -318,6 +315,9 @@ class DictClass(dict):
             return NotImplemented
         return self.__class__(dict(other, **self))
     
+    @classmethod
+    def from_dict(cls, dictionary):
+        return cls(dictionary)
     
     def pluck(self, *keys:str, ignore_missing:bool=False) -> list:
         """
@@ -335,7 +335,6 @@ class DictClass(dict):
         -------
         list
             Returns a list containing the values of the specified keys.
-
         """
         if len(keys) == 1:
             key = keys[0]
@@ -369,7 +368,6 @@ class DictClass(dict):
         -------
         list
             Returns a list containing the values of the discarded keys.
-
         """
         if not keys:
             return []
@@ -392,6 +390,14 @@ class DictClass(dict):
 
 class EnumClass(IntEnum):
     
+    
+    @classmethod
+    def from_string(cls, string: str):
+        return cls(int(string))
+
     @classmethod
     def _missing_(cls, value):
-        return int(value)
+        obj = int.__new__(cls, value)
+        obj._name_ = f"UNKNOWN_{value}"
+        obj._value_ = value
+        return obj
