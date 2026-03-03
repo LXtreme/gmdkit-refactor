@@ -57,7 +57,8 @@ class ObjectString(GzipString):
         else:
             self.start = Object()
             self.objects = ObjectList()
-        
+
+        self._dirty = True
         return (self.start, self.objects)
     
     def save(
@@ -70,9 +71,18 @@ class ObjectString(GzipString):
     
         if start is None or objects is None:
             return self.string
-    
+
+        # Guard against double-serialization: LoadPlistContentMixin.save() and
+        # PlistDecoderMixin.save_data() both call this method during a single
+        # to_file() call, which would rebuild and recompress all object strings
+        # twice for no reason.  The dirty flag is set by load() and cleared
+        # here so the second call is a cheap early-return.
+        if not getattr(self, "_dirty", True):
+            return self.string
+
         string = start.to_string() + objects.to_string()
         super().save(string)
+        self._dirty = False
         return self.string
     
 
