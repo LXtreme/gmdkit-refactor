@@ -16,14 +16,16 @@ def from_bool(obj:bool) -> str:
     
     
 def from_float(obj:float) -> str:
-    decimals = options.float_precision.get()
-    if decimals is None:
+    # ContextVar.get() is surprisingly expensive when called millions of times
+    # per round-trip.  In the normal case float_precision is None, so we skip
+    # the lookup entirely using a cheap module-level flag that is only flipped
+    # inside the casting_options() context manager.
+    if not options._float_precision_active:
         if obj.is_integer():
             return str(int(obj))
-        else:
-            return str(obj)
-    else:
-        return f"{obj:.{decimals}f}".rstrip('0').rstrip('.')
+        return str(obj)
+    decimals = options.float_precision.get()
+    return f"{obj:.{decimals}f}".rstrip('0').rstrip('.')
 
 def to_string(obj:Any, **kwargs) -> str:
     if obj is None:
@@ -39,9 +41,12 @@ def to_string(obj:Any, **kwargs) -> str:
 
 
 def to_numkey(key:str) -> NumKey:
-    if key.isdigit():
-        key = int(key)
-    return key
+    # isdigit() + int() scans the string twice.  try/except int() scans it
+    # once and is faster for the overwhelmingly common all-digit case.
+    try:
+        return int(key)
+    except ValueError:
+        return key
 
 def to_node(obj:Any, **kwargs) -> str:
     method = getattr(obj, "to_node", None)
@@ -107,24 +112,27 @@ def encode_text(string:str) -> str:
 
     
 def serialize(obj:Any) -> str:
-    
-    if isinstance(obj, str):
-        return obj
-    
-    elif obj is None:
-        return str()
-    
-    elif isinstance(obj, bool):
-        return from_bool(obj)
-    
-    elif isinstance(obj, float):           
+    # Ordered by frequency in a typical GD level: float >> int >> str >> other.
+    # type() identity checks are faster than isinstance() for the common
+    # primitives and avoid the bool-before-int subclass trap (bool IS an int).
+    t = type(obj)
+
+    if t is float:
         return from_float(obj)
-    
-    elif isinstance(obj, int):
+
+    if t is int:
         return str(obj)
-    
-    else:
-        return to_string(obj)
+
+    if t is str:
+        return obj
+
+    if obj is None:
+        return str()
+
+    if t is bool:
+        return from_bool(obj)
+
+    return to_string(obj)
 
 
 def dict_serializer(key:NumKey, value:Any):
